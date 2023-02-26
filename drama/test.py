@@ -5,16 +5,21 @@ from concurrent.futures import ThreadPoolExecutor as pool
 import os
 import threading
 import requests
+import requests.adapters
 import subprocess
 import re
 
 FILE_ROOT = "/Users/chenzhuo/Desktop/CHENZHUO/windows/Billing/aaaa"
+PATH_FILE_ROOT = "/Users/chenzhuo/Desktop/Standford/21days_DL/spyder/drama"
 SERVER_URL = "https://cdn2.jiuse.cloud/hls/"
 
+
 headers ={
-    'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
+    'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
+    # "Connection": "close",
+
 }
-VERIFY = False
+VERIFY = True
 
 def concat_files(video_index, output_video_name, file_list):
     input_path = os.path.join(FILE_ROOT, video_index)
@@ -40,7 +45,7 @@ def download_slice(TS_filename):
     data = response.content
     status = response.status_code
     time_end = time.time()
-    print(TS_filename, "\tstatus", status, "\tusing", time_end - time_start, "downloaded with", curr_thread)
+    print(TS_filename, "  status", status, "  using", time_end - time_start, "downloaded with", curr_thread)
 
     if status == 200:
         with open(os.path.join(FILE_ROOT, video_index, TS_filename), mode='wb+') as f:
@@ -87,7 +92,7 @@ def get_all_file_index(url):
 
 
 def get_url_from_file():
-    file = os.path.join(FILE_ROOT, "path_file.txt")
+    file = os.path.join(PATH_FILE_ROOT, "path_file.txt")
     f = open(file, "r")
     temp = f.readlines()
     f.close()
@@ -96,11 +101,11 @@ def get_url_from_file():
     print(temp)
     if temp:
         return temp.pop(0)
-    return ""
+    exit(0)
 
 
 def pop_url_from_file():
-    file = os.path.join(FILE_ROOT, "path_file.txt")
+    file = os.path.join(PATH_FILE_ROOT, "path_file.txt")
     f = open(file, "r")
     temp = f.readlines()
     temp = [temp[i].strip() for i in range(len(temp))]
@@ -118,11 +123,15 @@ if __name__ == "__main__":
     while True:
         # url = input("url: ")
         # url = "https://eoz43s.9s106.xyz/video/view/36f017b820f25e7a537f"
+        requests.adapters.DEFAULT_RETRIES = 5
+        s = requests.session()
+        s.keep_alive = False
+
 
         url = get_url_from_file()
         # if not url:
         #     time.sleep(5)
-        time.sleep(3)
+        time.sleep(5)
 
 
         time_start_total = time.time()
