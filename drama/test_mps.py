@@ -88,7 +88,7 @@ def main(device_choice):
     train_kwargs = {'batch_size': args.batch_size}
     test_kwargs = {'batch_size': args.test_batch_size}
     if use_gpu:
-        cuda_kwargs = {'num_workers': 1,
+        cuda_kwargs = {'num_workers': 8,
                        'pin_memory': True,
                        'shuffle': True}
         train_kwargs.update(cuda_kwargs)
