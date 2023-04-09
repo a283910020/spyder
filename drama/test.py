@@ -29,7 +29,7 @@ def concat_files(video_index, output_video_name, file_list):
         for d in file_list:
             f.write("file " + input_path + "/" + d + "\n")
 
-    ffmpeg = os.path.join(FILE_ROOT, "ffmpeg")
+    ffmpeg = os.path.join(PATH_FILE_ROOT, "ffmpeg")
     cmd = f"{ffmpeg} -f concat -safe 0 -i {ts_file} -c copy {output_video_name}"
     print(cmd)
     subprocess.call(cmd, shell=True)
