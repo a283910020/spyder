@@ -9,8 +9,8 @@ import requests.adapters
 import subprocess
 import re
 
-FILE_ROOT = "/Users/chenzhuo/Desktop/CHENZHUO/windows/Billing/aaaa"
-PATH_FILE_ROOT = "/Users/chenzhuo/Desktop/Standford/21days_DL/spyder/drama"
+FILE_ROOT = "/Users/chenzhuo/Movies/Videos/Media"
+PATH_FILE_ROOT = "/Users/chenzhuo/Desktop/github/spyder/drama"
 SERVER_URL = "https://cdn2.jiuse.cloud/hls/"
 
 
@@ -86,6 +86,9 @@ def get_all_file_index(url):
     time.sleep(2)
     response = response.content.decode('utf-8').split("\n")
     ts_index_list = [i for i in response if i.endswith(".ts")]
+    # print(len(ts_index_list))
+    # for t in ts_index_list:
+    #     print(t)
     return ts_index_list
 
 
@@ -148,6 +151,14 @@ def parse_page(url):
     return list(url_list)
 
 
+def check_full(total_len, out_folder):
+    total_l = len(total_len)
+    ts_index_list = ["index" + str(i) + ".ts" for i in range(total_l)]
+    file_list = sorted(os.listdir(out_folder))
+    need_download = [i for i in ts_index_list if i not in file_list]
+    print(len(need_download), need_download)
+    return need_download
+
 if __name__ == "__main__":
 
     while True:
@@ -193,8 +204,8 @@ if __name__ == "__main__":
             continue
         total_len = [file_list_len for _ in range(file_list_len)]
 
-        print(f"totally there are {file_list_len} ts files")
         pl = pool(max_workers=8)
+        print(f"totally there are {file_list_len} ts files")
         pl.map(download_slice, list(zip(total_len, file_list)))
         pl.shutdown()
 
